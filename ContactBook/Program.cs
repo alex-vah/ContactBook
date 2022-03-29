@@ -4,13 +4,21 @@ using System.Data.SqlClient;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Text.Json;
+
 
 namespace ContactBook
 {
+    public class ConnectionString
+    {
+        public string connectionString { get; set; }
+    }
     internal class Program
     {
         static void Main(string[] args)
         {
+            var connectionstring = new ConnectionString();
+            string jsonString = JsonSerializer.Serialize(connectionstring);
             ContactBookManager manager = new ContactBookManager();
             while (true)
             {
@@ -45,11 +53,7 @@ namespace ContactBook
                 }
                 else if (op.ToLower().Trim() == "view all")
                 {
-                    List<Contact> contacts = manager.ViewAll();
-                    foreach (Contact contact in contacts)
-                    {
-                        Console.WriteLine($"{manager._contacts.IndexOf(contact)+1}. {contact}");
-                    }
+                    manager.ViewAll();
                 }
                 else if (op.ToLower() == "edit")
                 {

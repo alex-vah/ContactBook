@@ -13,14 +13,10 @@ namespace ContactBook
         public List<Contact> _contacts = new List<Contact>();
         private const string connectionString = "Server = localhost; Database = master; Trusted_Connection = True;"; 
         private static SqlConnection cnn = new SqlConnection(connectionString);
-        private static string tableSql = "CREATE TABLE ContactBook" +
-                "(Id int , Name varchar(50), Email varchar(100), PhoneNumber varchar(20), Address varchar(255))"; 
-        private SqlCommand cmd = new SqlCommand(tableSql, cnn);
         private string sql;
         private SqlCommand command;
         public void Add(string name, string email, string phoneNumber, string address)
         {
-            _contacts = ViewAll();
             var contact = new Contact(name,email,phoneNumber,address);
             _contacts.Add(contact);
             cnn.Open();
@@ -35,14 +31,10 @@ namespace ContactBook
             using (var connection = new SqlConnection(connectionString))
             {
                 connection.Open();
-                List<int> ids = connection.Query<int>("SELECT Id FROM ContactBook").ToList();
-                List<string> names = connection.Query<string>("SELECT Name FROM ContactBook").ToList();
-                List<string> emails = connection.Query<string>("SELECT Email FROM ContactBook").ToList();
-                List<string> addresses = connection.Query<string>("SELECT Name FROM ContactBook").ToList();
-                List<string> phoneNumbers = connection.Query<string>("SELECT Name FROM ContactBook").ToList();
-                for (int i = 0; i < names.Count(); i++)
+                List<Contact> contacts = connection.Query<Contact>("SELECT Name, Email, PhoneNumber, Address FROM ContactBook").ToList();
+                for (int i = 0; i < contacts.Count(); i++)
                 {
-                    _contacts.Add(new Contact(names[i], emails[i], phoneNumbers[i], addresses[i]));
+                    _contacts.Add(contacts[i]);
                 }
                 connection.Close();
             }
@@ -50,30 +42,30 @@ namespace ContactBook
             Console.WriteLine($"{pos }. {_contacts[pos - 1]}");
         }
 
-        public List<Contact> ViewAll()
+        public void ViewAll()
         {
             using(var connection = new SqlConnection(connectionString))
             {
                 connection.Open();
-                List<string> names = connection.Query<string>("SELECT Name FROM ContactBook").ToList();
-                List<string> emails = connection.Query<string>("SELECT Email FROM ContactBook").ToList();
-                List<string> addresses = connection.Query<string>("SELECT Name FROM ContactBook").ToList();
-                List<string> phoneNumbers = connection.Query<string>("SELECT Name FROM ContactBook").ToList();
-                for (int i = _contacts.Count; i<names.Count(); i++)
+                List<Contact> contacts = connection.Query<Contact>("SELECT Name, Email, PhoneNumber, Address FROM ContactBook").ToList();
+                for (int i = _contacts.Count; i<contacts.Count(); i++)
                 {
-                    _contacts.Add(new Contact(names[i], emails[i], phoneNumbers[i], addresses[i]));
+                    _contacts.Add(contacts[i]);
                 }
-                if(names.Count()<_contacts.Count())
+                if(contacts.Count()<_contacts.Count())
                 {
-                    for (int i = names.Count(); i<_contacts.Count(); i++)
+                    for (int i = contacts.Count(); i<_contacts.Count(); i++)
                     {
                         _contacts.Remove(_contacts[i]);
                     }
                 }
                 connection.Close();
             }
-            return _contacts;
-         }
+            foreach (Contact contact in _contacts)
+            {
+                Console.WriteLine($"{_contacts.IndexOf(contact) + 1}. {contact}");
+            }
+        }
         public void Edit(int pos, Contact contact)
         {
             cnn.Open(); 
