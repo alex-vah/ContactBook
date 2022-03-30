@@ -11,7 +11,7 @@ namespace ContactBook
     public class ContactBookManager
     {
         public List<Contact> _contacts = new List<Contact>();
-        private const string connectionString = "Server = localhost; Database = master; Trusted_Connection = True;"; 
+        public static string connectionString = "Server = localhost; Database = master; Trusted_Connection = True;"; 
         private static SqlConnection cnn = new SqlConnection(connectionString);
         private string sql;
         private SqlCommand command;

@@ -9,17 +9,19 @@ using System.Text.Json;
 
 namespace ContactBook
 {
-    public class ConnectionString
-    {
-        public string connectionString { get; set; }
-    }
     internal class Program
     {
         static void Main(string[] args)
-        {
-            var connectionstring = new ConnectionString();
-            string jsonString = JsonSerializer.Serialize(connectionstring);
+        {            
             ContactBookManager manager = new ContactBookManager();
+            Console.WriteLine($"The current connection string is  '{ContactBookManager.connectionString}'");
+            Console.Write("Do you want to change the connection string Y/N?: ");
+            string choice = Console.ReadLine();
+            if (choice.ToLower()[0] == 'y')
+            {
+                Console.Write("Enter the new connection string: ");
+                ContactBookManager.connectionString = Console.ReadLine();
+            }
             while (true)
             {
                 Console.WriteLine(@"Enter the operation you want to do: Create new contact(Create), 
